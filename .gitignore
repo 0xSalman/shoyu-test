@@ -1,0 +1,15 @@
+# system files
+.idea
+.DS_Store
+Thumbs.db
+
+# compiled / dependencies
+node_modules
+.env
+dist
+
+# logging file
+log-debug
+
+# others
+src/defs/gql-types.ts
