@@ -1,5 +1,5 @@
 import { redisConfig, blockchainConfig } from '@src/env'
-import { getEthereumEvent } from '@src/job/handler'
+import { getEthereumEvent, createSigners } from '@src/job/handler'
 import * as Bull from 'bull'
 
 const redis = {
@@ -7,12 +7,12 @@ const redis = {
   port: redisConfig.port,
 }
 const queuePrefix = 'queue'
+
 const queues: {[key: string]: Bull.Queue} = {}
 
 const createQueues = (): void => {
   blockchainConfig.networks.forEach((val: string, key: string) => {
-    const qname = `${key}-${val}`
-    queues[key] = new Bull(qname, {
+    queues[key] = new Bull(val, {
       prefix: queuePrefix,
       redis,
     })
@@ -41,6 +41,7 @@ const publishJobs = (): Promise<Bull.Job[]> => {
 
 export const startJobsAndListen = (): Promise<void> => {
   createQueues()
+  createSigners()
   return publishJobs()
     .then(() => void listenToJobs())
     .then(() => console.log('Start 👂 listening for jobs :)!!'))

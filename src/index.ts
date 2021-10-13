@@ -6,13 +6,14 @@ import { db } from '@src/db'
 import { verifyEnvironment, SERVER_PORT } from '@src/env'
 import { stopApolloServer, startApolloSever } from '@src/graphql'
 import { fp } from '@src/helper'
+
 const kill = require('kill-port')
 
 const bootstrap = (): Promise<void> => {
   verifyEnvironment()
   return db.connect()
     .then(() => startApolloSever(SERVER_PORT))
-    .then(fp.pause(1000))
+    .then(fp.pause(500))
     .then(() => startJobsAndListen())
 }
 
@@ -24,7 +25,7 @@ const handleError = (err: Error): void => {
 const killPort = (): Promise<unknown> => {
   return kill(SERVER_PORT)
     // Without this small delay sometimes it's not killed in time
-    .then(fp.pause(100))
+    .then(fp.pause(500))
     .catch((err: any) => console.log(err))
 }
 

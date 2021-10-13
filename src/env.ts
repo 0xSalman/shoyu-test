@@ -3,7 +3,9 @@ import { misc } from '@src/helper'
 
 const lookupEnvKeyOrThrow = (key: string): string => {
   const value = process.env[key]
-  if (_.isString(value)) return value
+  if (_.isString(value)) {
+    return value
+  }
   throw new Error(`Environment variable ${key} is required`)
 }
 
@@ -13,6 +15,7 @@ export const verifyEnvironment = (): void => {
 
 export const SERVER_PORT = parseInt(process.env.PORT) || 9080
 export const NODE_ENV = process.env.NODE_ENV
+export const AUTH_MESSAGE = lookupEnvKeyOrThrow('AUTH_MESSAGE')
 
 export const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
