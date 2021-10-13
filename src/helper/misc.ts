@@ -10,3 +10,5 @@ export const stringListToMap = (
     return agg
   }, new Map<string, string>())
 }
+
+export const toUserId = (chainId: number, address: string): string => `${chainId}:${address}`

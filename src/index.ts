@@ -2,7 +2,7 @@
 require('dotenv').config()
 
 import { startJobsAndListen, stopJobsAndDisconnect } from '@src/job'
-import { disconnectDB, connectDB } from '@src/db'
+import { db } from '@src/db'
 import { verifyEnvironment, SERVER_PORT } from '@src/env'
 import { stopApolloServer, startApolloSever } from '@src/graphql'
 import { fp } from '@src/helper'
@@ -10,7 +10,7 @@ const kill = require('kill-port')
 
 const bootstrap = (): Promise<void> => {
   verifyEnvironment()
-  return connectDB()
+  return db.connect()
     .then(() => startApolloSever(SERVER_PORT))
     .then(fp.pause(1000))
     .then(() => startJobsAndListen())
@@ -35,7 +35,7 @@ const logGoodbye = (): void => {
 const cleanExit = (): Promise<void> => {
   return stopApolloServer()
     .then(killPort)
-    .then(disconnectDB)
+    .then(db.disconnect)
     .then(stopJobsAndDisconnect)
     .then(fp.pause(500))
     .finally(() => {
