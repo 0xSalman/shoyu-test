@@ -32,6 +32,7 @@ export const redisConfig = {
 
 export const blockchainConfig = {
   networks: misc.stringListToMap(lookupEnvKeyOrThrow('NETWORKS')),
+  networksURI: misc.stringListToMap(lookupEnvKeyOrThrow('NETWORKS_URI'), '|', ';'),
   contractIds: misc.stringListToMap(lookupEnvKeyOrThrow('CONTRACT_IDS')),
   contractAccount: lookupEnvKeyOrThrow('CONTRACT_ACCOUNT'),
   contractAccountPK: lookupEnvKeyOrThrow('CONTRACT_ACCOUNT_PK'),

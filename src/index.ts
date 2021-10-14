@@ -1,20 +1,22 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 require('dotenv').config()
 
-import { startJobsAndListen, stopJobsAndDisconnect } from '@src/job'
+import { job } from '@src/job'
 import { db } from '@src/db'
 import { verifyEnvironment, SERVER_PORT } from '@src/env'
-import { stopApolloServer, startApolloSever } from '@src/graphql'
+import { server } from '@src/graphql'
 import { fp } from '@src/helper'
+import { blockchain } from '@src/blockchain'
 
 const kill = require('kill-port')
 
 const bootstrap = (): Promise<void> => {
   verifyEnvironment()
   return db.connect()
-    .then(() => startApolloSever(SERVER_PORT))
+    .then(() => server.start(SERVER_PORT))
     .then(fp.pause(500))
-    .then(() => startJobsAndListen())
+    .then(blockchain.createProviders)
+    .then(job.startAndListen)
 }
 
 const handleError = (err: Error): void => {
@@ -34,10 +36,10 @@ const logGoodbye = (): void => {
 }
 
 const cleanExit = (): Promise<void> => {
-  return stopApolloServer()
+  return server.stop()
     .then(killPort)
     .then(db.disconnect)
-    .then(stopJobsAndDisconnect)
+    .then(job.stopAndDisconnect)
     .then(fp.pause(500))
     .finally(() => {
       logGoodbye()
