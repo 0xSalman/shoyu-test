@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
-import { misc } from '@src/helper'
+
+import { helper } from '@src/helper'
 
 const lookupEnvKeyOrThrow = (key: string): string => {
   const value = process.env[key]
@@ -13,9 +14,8 @@ export const verifyEnvironment = (): void => {
   console.log('Loading environment...')
 }
 
-export const SERVER_PORT = parseInt(process.env.PORT) || 9080
-export const NODE_ENV = process.env.NODE_ENV
-export const AUTH_MESSAGE = lookupEnvKeyOrThrow('AUTH_MESSAGE')
+export const serverPort = parseInt(process.env.PORT) || 9080
+export const authMessage = lookupEnvKeyOrThrow('AUTH_MESSAGE')
 
 export const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
@@ -31,9 +31,9 @@ export const redisConfig = {
 }
 
 export const blockchainConfig = {
-  networks: misc.stringListToMap(lookupEnvKeyOrThrow('NETWORKS')),
-  networksURI: misc.stringListToMap(lookupEnvKeyOrThrow('NETWORKS_URI'), '|', ';'),
-  contractIds: misc.stringListToMap(lookupEnvKeyOrThrow('CONTRACT_IDS')),
+  networks: helper.stringListToMap(lookupEnvKeyOrThrow('NETWORKS')),
+  networksURI: helper.stringListToMap(lookupEnvKeyOrThrow('NETWORKS_URI'), '|', ';'),
+  contractIds: helper.stringListToMap(lookupEnvKeyOrThrow('CONTRACT_IDS')),
   contractAccount: lookupEnvKeyOrThrow('CONTRACT_ACCOUNT'),
   contractAccountPK: lookupEnvKeyOrThrow('CONTRACT_ACCOUNT_PK'),
 }

@@ -8,7 +8,7 @@ type User {
 }
 
 input UserInput {
-  username: String
+  username: String!
   name: String
   twitter: String
 }
@@ -20,4 +20,5 @@ extend type Query {
 
 extend type Mutation {
   signUp(input: UserInput!): User
+  updateMe(input: UserInput!): User
 }

@@ -1,14 +1,14 @@
-import { ethers, Signer, Contract } from 'ethers'
-import { AUTH_MESSAGE, blockchainConfig } from '@src/env'
+import { ethers, Signer, Contract, utils } from 'ethers'
+
+import { authMessage, blockchainConfig } from '@src/env'
 import contractABI from '@src/contract/IdentityManager.json'
 
 // TODO this returns any address which
 //    1) may not even exist or
-//    2) does not actually belong to user making the request
+//    2) does not actually belong to the user making the request
 //  this does not verify that user actually signed the required message
 export const getAddressFromSignature = (signature: string): string => {
-  const signerAddress = ethers.utils.verifyMessage(AUTH_MESSAGE, signature)
-  return signerAddress.toLowerCase()
+  return utils.verifyMessage(authMessage, signature)
 }
 
 const providers: { [key: string]: ethers.providers.JsonRpcProvider } = {}
@@ -19,16 +19,34 @@ export const createProviders = (): void => {
   })
 }
 
-export const getSigner = (chainId: string, address?: string): Signer => {
+export const getSigner = (chainId: string): Signer => {
   const provider = providers[chainId]
-  if (!address) {
-    return new ethers.Wallet(blockchainConfig.contractAccountPK, provider)
-  }
-  return provider.getSigner(address)
+  return new ethers.Wallet(blockchainConfig.contractAccountPK, provider)
 }
 
-export const getContract = (chainId: string, address?: string): Contract => {
-  const signer = getSigner(chainId, address)
+export const getContract = (chainId: string): Contract => {
+  const signer = getSigner(chainId)
   const contractAddress = blockchainConfig.contractIds.get(chainId)
   return new ethers.Contract(contractAddress, contractABI, signer)
 }
+
+export const getABIInterface = (): utils.Interface => {
+  return new utils.Interface(contractABI)
+}
+
+export const toGasUnits = (val: string): ethers.BigNumber => {
+  return utils.parseUnits(val, 'gwei')
+}
+
+type ContractOptions = {
+  gasLimit: ethers.BigNumber
+  gasPrice: ethers.BigNumber
+}
+
+export const getGasConf = (
+  gasLimit = '0.01',
+  gasPrice = '20.0',
+): ContractOptions => ({
+  gasLimit: toGasUnits(gasLimit),
+  gasPrice: toGasUnits(gasPrice),
+})

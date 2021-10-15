@@ -1,2 +1,2 @@
 export * from './misc'
-export * as GQLTypes from './gql-types'
+export * as gqlTypes from './gql-types'

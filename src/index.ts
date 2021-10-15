@@ -1,19 +1,18 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 require('dotenv').config()
+const kill = require('kill-port')
 
 import { job } from '@src/job'
 import { db } from '@src/db'
-import { verifyEnvironment, SERVER_PORT } from '@src/env'
+import { verifyEnvironment, serverPort } from '@src/env'
 import { server } from '@src/graphql'
 import { fp } from '@src/helper'
 import { blockchain } from '@src/blockchain'
 
-const kill = require('kill-port')
-
 const bootstrap = (): Promise<void> => {
   verifyEnvironment()
   return db.connect()
-    .then(() => server.start(SERVER_PORT))
+    .then(() => server.start(serverPort))
     .then(fp.pause(500))
     .then(blockchain.createProviders)
     .then(job.startAndListen)
@@ -25,7 +24,7 @@ const handleError = (err: Error): void => {
 }
 
 const killPort = (): Promise<unknown> => {
-  return kill(SERVER_PORT)
+  return kill(serverPort)
     // Without this small delay sometimes it's not killed in time
     .then(fp.pause(500))
     .catch((err: any) => console.log(err))

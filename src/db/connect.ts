@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+
 import { dbConfig } from '@src/env'
 
 mongoose.set('returnOriginal', false)

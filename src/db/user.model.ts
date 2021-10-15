@@ -18,6 +18,12 @@ const userSchema = new Schema({
   },
   username: {
     type: String,
+    required: true,
+  },
+  chainUsername: {
+    type: String,
+    index: true,
+    unique: true,
   },
   twitter: {
     type: String,
@@ -35,6 +41,7 @@ interface User {
   name?: string
   username?: string
   twitter?: string
+  chainUsername?: string
 }
 
 export interface UserDocument extends User, Document { }

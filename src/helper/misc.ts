@@ -1,3 +1,8 @@
+import { skip } from 'graphql-resolvers'
+
+import { ApolloCtx } from '@src/defs'
+import { appError, userError } from '@src/graphql/error'
+
 export const stringListToMap = (
   str: string,
   listSep = '|',
@@ -11,4 +16,14 @@ export const stringListToMap = (
   }, new Map<string, string>())
 }
 
-export const toUserId = (chainId: number, address: string): string => `${chainId}:${address}`
+export const toCompositeKey = (val1: string, val2: string): string => `${val1}:${val2}`
+
+export const hasChainId = (_: any, args: any, ctx: ApolloCtx): any => {
+  const { chainId } = ctx
+  return chainId ? skip : appError.buildMissingChainIdError()
+}
+
+export const isAuthenticated = (_: any, args: any, ctx: ApolloCtx): any => {
+  const { userId } = ctx
+  return userId ? skip : userError.buildAuthError()
+}

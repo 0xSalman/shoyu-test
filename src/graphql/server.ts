@@ -1,27 +1,28 @@
 import { ApolloServer } from 'apollo-server'
+
 import { typeDefs } from '@src/graphql/schema'
 import { resolvers } from '@src/graphql/resolver'
 import { ApolloCtx } from '@src/defs'
-import { toUserId } from '@src/helper/misc'
+import { helper } from '@src/helper'
 import { blockchain } from '@src/blockchain'
+
+const chainIdHeader = 'chain-id'
+const authHeader = 'auth-signature'
 
 const createContext = (ctx: any): ApolloCtx => {
   const { req: request, connection } = ctx
   // * For subscription and query-mutation, gql handles headers differently 😪
   const headers = connection && connection.context ? connection.context : request.headers
 
-  const chainId = headers['Chain-Id']
-  if (!chainId) {
-    throw new Error('Missing required header "Chain-Id"')
+  const chainId = headers[chainIdHeader] || null
+  const authSignature = headers[authHeader] || null
+  let address: string = null
+  let userId: string = null
+  if (authSignature !== null) {
+    address = blockchain.getAddressFromSignature(authSignature)
+    userId = helper.toCompositeKey(chainId, address)
   }
 
-  const authSignature = headers['Auth-Signature']
-  if (!authSignature) {
-    throw new Error('Missing required header "Auth-Signature"')
-  }
-
-  const address = blockchain.getAddressFromSignature(authSignature)
-  const userId = toUserId(chainId, address)
   return {
     userId,
     address,

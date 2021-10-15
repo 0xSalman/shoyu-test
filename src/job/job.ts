@@ -1,6 +1,7 @@
+import Bull from 'bull'
+
 import { redisConfig, blockchainConfig } from '@src/env'
 import { getEthereumEvent } from '@src/job/handler'
-import Bull from 'bull'
 
 const redis = {
   host: redisConfig.host,
