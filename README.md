@@ -23,8 +23,9 @@ Mongo UI is available at `localhost:9070`.
 
 ## Notes
 
-I slightly updated the given GraphQL schema: `UserInput.username` is a required attribute. This seems very logically 
+1. I slightly updated the given GraphQL schema: `UserInput.username` is a required attribute. This seems very logically 
 considering the smart contract implementation.
+2. Smart contracts events fetching jobs run every minute
 
 ## TODOs
 
